@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The_Boyz Football Statistics</title>
+    <style>
+        :root {
+            --primary-color: #8a2be2;
+            --secondary-color: #4b0082;
+            --accent-color: #da70d6;
+            --dark-color: #121212;
+            --darker-color: #0a0a0a;
+            --light-color: #f8f8ff;
+            --success-color: #00ff7f;
+            --danger-color: #ff4444;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--dark-color);
+            color: var(--light-color);
+            line-height: 1.6;
+            background-image: linear-gradient(to bottom, var(--darker-color), var(--dark-color));
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--darker-color), var(--secondary-color));
+            color: white;
+            padding: 20px 0;
+            border-radius: var(--border-radius);
+            margin-bottom: 30px;
+            box-shadow: var(--box-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--primary-color));
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            color: var(--accent-color);
+        }
+        
+        .admin-section {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(138, 43, 226, 0.4);
+            background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--primary-color);
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .search-box, .filter-select {
+            padding: 12px 15px;
+            border: 1px solid var(--secondary-color);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            flex-grow: 1;
+            min-width: 200px;
+            background-color: var(--darker-color);
+            color: var(--light-color);
+            transition: var(--transition);
+        }
+        
+        .search-box:focus, .filter-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.3);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, var(--darker-color), var(--secondary-color));
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            transition: var(--transition);
+            border: 1px solid var(--secondary-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(138, 43, 226, 0.4);
+        }
+        
+        .stat-card h3 {
+            color: var(--accent-color);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: linear-gradient(135deg, var(--darker-color), var(--secondary-color));
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 30px;
+            border: 1px solid var(--secondary-color);
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(138, 43, 226, 0.2);
+            transition: var(--transition);
+        }
+        
+        th {
+            background-color: var(--secondary-color);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            user-select: none;
+        }
+        
+        th:hover {
+            background-color: var(--primary-color);
+        }
+        
+        th::after {
+            content: '↕';
+            position: absolute;
+            right: 15px;
+            opacity: 0.7;
+        }
+        
+        tr {
+            transition: var(--transition);
+        }
+        
+        tr:nth-child(even) {
+            background-color: rgba(75, 0, 130, 0.1);
+        }
+        
+        tr:hover {
+            background-color: rgba(138, 43, 226, 0.2);
+        }
+        
+        .rating {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: white;
+            transition: var(--transition);
+        }
+        
+        .rating:hover {
+            transform: scale(1.1);
+        }
+        
+        .rating-high {
+            background: linear-gradient(135deg, var(--success-color), #00cc66);
+        }
+        
+        .rating-medium {
+            background: linear-gradient(135deg, #ffaa00, #ff7700);
+        }
+        
+        .rating-low {
+            background: linear-gradient(135deg, var(--danger-color), #cc0000);
+        }
+        
+        .team-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: white;
+            transition: var(--transition);
+        }
+        
+        .team-badge:hover {
+            transform: scale(1.05);
+        }
+        
+        .team-moid {
+            background: linear-gradient(135deg, #ff4444, #cc0000);
+        }
+        
+        .team-subhan {
+            background: linear-gradient(135deg, #00cc66, #00994d);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: var(--accent-color);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--secondary-color);
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, var(--darker-color), var(--secondary-color));
+            padding: 30px;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--primary-color);
+            position: relative;
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--accent-color);
+            transition: var(--transition);
+        }
+        
+        .close-modal:hover {
+            color: var(--primary-color);
+            transform: scale(1.2);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--accent-color);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--secondary-color);
+            border-radius: var(--border-radius);
+            background-color: var(--dark-color);
+            color: var(--light-color);
+            transition: var(--transition);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(138, 43, 226, 0.3);
+        }
+        
+        .match-result-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .admin-panel {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--darker-color), var(--secondary-color));
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            border: 1px solid var(--primary-color);
+        }
+        
+        .admin-panel h2 {
+            color: var(--accent-color);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .admin-controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .admin-section {
+                margin-top: 15px;
+                justify-content: center;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            th, td {
+                padding: 10px 5px;
+                font-size: 0.9rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .match-result-form {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            th, td {
+                padding: 8px 3px;
+                font-size: 0.8rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div>
+                    <h1>The_Boyz Football Statistics</h1>
+                    <p class="subtitle">Track goals, assists, matches and player ratings</p>
+                </div>
+                <div class="admin-section">
+                    <button class="btn" id="adminLoginBtn">Admin Login</button>
+                    <button class="btn btn-secondary" id="addMatchBtn">Add Match Result</button>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="controls">
+            <input type="text" class="search-box" id="searchInput" placeholder="Search players...">
+            <select class="filter-select" id="teamFilter">
+                <option value="">All Teams</option>
+                <option value="MOIDFC">MOIDFC</option>
+                <option value="SUBHANFC">SUBHANFC</option>
+            </select>
+            <select class="filter-select" id="sortSelect">
+                <option value="goals-desc">Goals (High to Low)</option>
+                <option value="goals-asc">Goals (Low to High)</option>
+                <option value="rating-desc">Rating (High to Low)</option>
+                <option value="rating-asc">Rating (Low to High)</option>
+                <option value="matches-desc">Matches (High to Low)</option>
+                <option value="name-asc">Name (A to Z)</option>
+            </select>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Players</h3>
+                <div class="stat-value" id="totalPlayers">20</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Goals</h3>
+                <div class="stat-value" id="totalGoals">361</div>
+            </div>
+            <div class="stat-card">
+                <h3>Top Scorer</h3>
+                <div class="stat-value" id="topScorer">MOID (88)</div>
+            </div>
+            <div class="stat-card">
+                <h3>Highest Rating</h3>
+                <div class="stat-value" id="highestRating">10.0</div>
+            </div>
+        </div>
+        
+        <table id="playersTable">
+            <thead>
+                <tr>
+                    <th data-sort="name">NAME</th>
+                    <th data-sort="team">TEAM</th>
+                    <th data-sort="matches">MATCHES PLAYED</th>
+                    <th data-sort="goals">GOALS SCORED</th>
+                    <th data-sort="assists">ASSISTS</th>
+                    <th data-sort="wins">MATCH WON</th>
+                    <th data-sort="rating">AVERAGE RATING</th>
+                </tr>
+            </thead>
+            <tbody id="playersTableBody">
+                <!-- Player data will be inserted here by JavaScript -->
+            </tbody>
+        </table>
+        
+        <div class="admin-panel" id="adminPanel">
+            <h2>Admin Panel</h2>
+            <div class="admin-controls">
+                <button class="btn" id="updatePlayerBtn">Update Player Stats</button>
+                <button class="btn" id="addPlayerBtn">Add New Player</button>
+                <button class="btn btn-secondary" id="logoutBtn">Logout</button>
+            </div>
+            <div id="adminContent">
+                <!-- Admin content will be inserted here -->
+            </div>
+        </div>
+        
+        <footer>
+            <p>The_Boyz Football Statistics Database &copy; 2023</p>
+        </footer>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeLoginModal">&times;</span>
+            <h2 style="color: var(--accent-color); margin-bottom: 20px; text-align: center;">Admin Login</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-control" required>
+                </div>
+                <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Match Result Modal -->
+    <div class="modal" id="matchModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeMatchModal">&times;</span>
+            <h2 style="color: var(--accent-color); margin-bottom: 20px; text-align: center;">Add Match Result</h2>
+            <form id="matchForm">
+                <div class="match-result-form">
+                    <div class="form-group">
+                        <label for="team1">Team 1</label>
+                        <select id="team1" class="form-control" required>
+                            <option value="MOIDFC">MOIDFC</option>
+                            <option value="SUBHANFC">SUBHANFC</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="team2">Team 2</label>
+                        <select id="team2" class="form-control" required>
+                            <option value="SUBHANFC">SUBHANFC</option>
+                            <option value="MOIDFC">MOIDFC</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="score1">Score Team 1</label>
+                        <input type="number" id="score1" class="form-control" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="score2">Score Team 2</label>
+                        <input type="number" id="score2" class="form-control" min="0" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="matchDate">Match Date</label>
+                    <input type="date" id="matchDate" class="form-control" required>
+                </div>
+                <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">Add Match Result</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Player data
+        const players = [
+            { name: "MOID", team: "MOIDFC", matches: 37, goals: 88, assists: "NILL", wins: 18, rating: 9.6 },
+            { name: "SUBHAN", team: "SUBHANFC", matches: 37, goals: 73, assists: "NILL", wins: 16, rating: 9.6 },
+            { name: "QAHIR", team: "SUBHANFC", matches: 18, goals: 48, assists: "NILL", wins: 10, rating: 9.6 },
+            { name: "UBAID", team: "MOIDFC", matches: 37, goals: 36, assists: "NILL", wins: 18, rating: 9.4 },
+            { name: "BAKER", team: "MOIDFC", matches: 32, goals: 24, assists: "NILL", wins: 15, rating: 9.2 },
+            { name: "QASIM", team: "SUBHANFC", matches: 22, goals: 21, assists: "NILL", wins: 7, rating: 9.0 },
+            { name: "AWAIS", team: "SUBHANFC", matches: 7, goals: 18, assists: "NILL", wins: 3, rating: 10.0 },
+            { name: "ASIM", team: "SUBHANFC", matches: 24, goals: 14, assists: "NILL", wins: 11, rating: 8.1 },
+            { name: "MOIZ", team: "MOIDFC", matches: 21, goals: 11, assists: "NILL", wins: 11, rating: 8.9 },
+            { name: "RAYAN", team: "MOIDFC", matches: 15, goals: 10, assists: "NILL", wins: 9, rating: 8.0 },
+            { name: "MURTAZA", team: "SUBHANFC", matches: 14, goals: 5, assists: "NILL", wins: 8, rating: 9.3 },
+            { name: "ABDULLAH", team: "MOIDFC", matches: 16, goals: 5, assists: "NILL", wins: 8, rating: 8.9 },
+            { name: "AHMED", team: "MOIDFC", matches: 1, goals: 3, assists: "NILL", wins: 1, rating: 10.0 },
+            { name: "ANEEB", team: "MOIDFC", matches: 7, goals: 2, assists: "NILL", wins: 5, rating: 8.0 },
+            { name: "MUNEEB", team: "SUBHANFC", matches: 11, goals: 2, assists: "NILL", wins: 3, rating: 8.0 },
+            { name: "ZEESHAN", team: "SUBHANFC", matches: 2, goals: 1, assists: "NILL", wins: 1, rating: 7.8 },
+            { name: "IBRAHIM", team: "SUBHANFC", matches: 1, goals: 0, assists: "NILL", wins: 1, rating: 8.1 },
+            { name: "ALI", team: "MOIDFC", matches: 1, goals: 0, assists: "NILL", wins: 0, rating: 8.0 },
+            { name: "EHTISHAM", team: "MOIDFC", matches: 2, goals: 1, assists: "NILL", wins: 0, rating: 6.0 },
+            { name: "HAIDER", team: "SUBHANFC", matches: 1, goals: 0, assists: "NILL", wins: 0, rating: 5.0 },
+            { name: "HAMMAD", team: "SUBHANFC", matches: 1, goals: 0, assists: "NILL", wins: 1, rating: 7.2 }
+        ];
+
+        // DOM elements
+        const playersTableBody = document.getElementById('playersTableBody');
+        const searchInput = document.getElementById('searchInput');
+        const teamFilter = document.getElementById('teamFilter');
+        const sortSelect = document.getElementById('sortSelect');
+        const totalPlayers = document.getElementById('totalPlayers');
+        const totalGoals = document.getElementById('totalGoals');
+        const topScorer = document.getElementById('topScorer');
+        const highestRating = document.getElementById('highestRating');
+        const adminLoginBtn = document.getElementById('adminLoginBtn');
+        const addMatchBtn = document.getElementById('addMatchBtn');
+        const loginModal = document.getElementById('loginModal');
+        const matchModal = document.getElementById('matchModal');
+        const closeLoginModal = document.getElementById('closeLoginModal');
+        const closeMatchModal = document.getElementById('closeMatchModal');
+        const loginForm = document.getElementById('loginForm');
+        const matchForm = document.getElementById('matchForm');
+        const adminPanel = document.getElementById('adminPanel');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const updatePlayerBtn = document.getElementById('updatePlayerBtn');
+        const addPlayerBtn = document.getElementById('addPlayerBtn');
+        const adminContent = document.getElementById('adminContent');
+
+        // Initialize the table
+        function initTable() {
+            renderTable(players);
+            updateStats(players);
+        }
+
+        // Render the table with player data
+        function renderTable(data) {
+            playersTableBody.innerHTML = '';
+            
+            data.forEach(player => {
+                const row = document.createElement('tr');
+                
+                // Determine rating class
+                let ratingClass = 'rating-medium';
+                if (player.rating >= 9.0) ratingClass = 'rating-high';
+                else if (player.rating < 7.0) ratingClass = 'rating-low';
+                
+                // Determine team class
+                const teamClass = player.team === 'MOIDFC' ? 'team-moid' : 'team-subhan';
+                
+                row.innerHTML = `
+                    <td>${player.name}</td>
+                    <td><span class="team-badge ${teamClass}">${player.team}</span></td>
+                    <td>${player.matches}</td>
+                    <td>${player.goals}</td>
+                    <td>${player.assists}</td>
+                    <td>${player.wins}</td>
+                    <td><span class="rating ${ratingClass}">${player.rating}</span></td>
+                `;
+                
+                playersTableBody.appendChild(row);
+            });
+        }
+
+        // Update statistics
+        function updateStats(data) {
+            totalPlayers.textContent = data.length;
+            
+            const totalGoalsCount = data.reduce((sum, player) => sum + player.goals, 0);
+            totalGoals.textContent = totalGoalsCount;
+            
+            const topScorerPlayer = data.reduce((max, player) => 
+                player.goals > max.goals ? player : max, data[0]);
+            topScorer.textContent = `${topScorerPlayer.name} (${topScorerPlayer.goals})`;
+            
+            const highestRatingPlayer = data.reduce((max, player) => 
+                player.rating > max.rating ? player : max, data[0]);
+            highestRating.textContent = highestRatingPlayer.rating;
+        }
+
+        // Filter and sort players
+        function filterAndSortPlayers() {
+            let filteredPlayers = [...players];
+            
+            // Apply search filter
+            const searchTerm = searchInput.value.toLowerCase();
+            if (searchTerm) {
+                filteredPlayers = filteredPlayers.filter(player => 
+                    player.name.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            // Apply team filter
+            const teamValue = teamFilter.value;
+            if (teamValue) {
+                filteredPlayers = filteredPlayers.filter(player => 
+                    player.team === teamValue
+                );
+            }
+            
+            // Apply sorting
+            const sortValue = sortSelect.value;
+            switch(sortValue) {
+                case 'goals-desc':
+                    filteredPlayers.sort((a, b) => b.goals - a.goals);
+                    break;
+                case 'goals-asc':
+                    filteredPlayers.sort((a, b) => a.goals - b.goals);
+                    break;
+                case 'rating-desc':
+                    filteredPlayers.sort((a, b) => b.rating - a.rating);
+                    break;
+                case 'rating-asc':
+                    filteredPlayers.sort((a, b) => a.rating - b.rating);
+                    break;
+                case 'matches-desc':
+                    filteredPlayers.sort((a, b) => b.matches - a.matches);
+                    break;
+                case 'name-asc':
+                    filteredPlayers.sort((a, b) => a.name.localeCompare(b.name));
+                    break;
+                default:
+                    // Default sorting (by goals desc)
+                    filteredPlayers.sort((a, b) => b.goals - a.goals);
+            }
+            
+            renderTable(filteredPlayers);
+            updateStats(filteredPlayers);
+        }
+
+        // Admin login
+        function adminLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username === 'moid' && password === 'bhoolgaya') {
+                loginModal.style.display = 'none';
+                adminPanel.style.display = 'block';
+                showMessage('Login successful!', 'success');
+            } else {
+                showMessage('Invalid credentials!', 'error');
+            }
+        }
+
+        // Show message
+        function showMessage(message, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.textContent = message;
+            messageDiv.style.padding = '10px';
+            messageDiv.style.margin = '10px 0';
+            messageDiv.style.borderRadius = 'var(--border-radius)';
+            
+            if (type === 'success') {
+                messageDiv.style.backgroundColor = 'var(--success-color)';
+                messageDiv.style.color = 'var(--dark-color)';
+            } else {
+                messageDiv.style.backgroundColor = 'var(--danger-color)';
+                messageDiv.style.color = 'white';
+            }
+            
+            document.querySelector('.container').insertBefore(messageDiv, adminPanel);
+            
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 3000);
+        }
+
+        // Add match result
+        function addMatchResult() {
+            const team1 = document.getElementById('team1').value;
+            const team2 = document.getElementById('team2').value;
+            const score1 = parseInt(document.getElementById('score1').value);
+            const score2 = parseInt(document.getElementById('score2').value);
+            const matchDate = document.getElementById('matchDate').value;
+            
+            // In a real application, you would save this to a database
+            // For this demo, we'll just show a success message
+            showMessage(`Match result added: ${team1} ${score1}-${score2} ${team2} on ${matchDate}`, 'success');
+            matchModal.style.display = 'none';
+            matchForm.reset();
+        }
+
+        // Show update player form
+        function showUpdatePlayerForm() {
+            adminContent.innerHTML = `
+                <h3 style="color: var(--accent-color); margin-bottom: 15px;">Update Player Statistics</h3>
+                <form id="updatePlayerForm">
+                    <div class="form-group">
+                        <label for="playerSelect">Select Player</label>
+                        <select id="playerSelect" class="form-control" required>
+                            ${players.map(player => `<option value="${player.name}">${player.name} (${player.team})</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="match-result-form">
+                        <div class="form-group">
+                            <label for="updateMatches">Matches Played</label>
+                            <input type="number" id="updateMatches" class="form-control" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="updateGoals">Goals Scored</label>
+                            <input type="number" id="updateGoals" class="form-control" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="updateAssists">Assists</label>
+                            <input type="text" id="updateAssists" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="updateWins">Matches Won</label>
+                            <input type="number" id="updateWins" class="form-control" min="0" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="updateRating">Average Rating</label>
+                        <input type="number" id="updateRating" class="form-control" min="0" max="10" step="0.1" required>
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">Update Player</button>
+                </form>
+            `;
+            
+            document.getElementById('updatePlayerForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                showMessage('Player statistics updated successfully!', 'success');
+            });
+        }
+
+        // Show add player form
+        function showAddPlayerForm() {
+            adminContent.innerHTML = `
+                <h3 style="color: var(--accent-color); margin-bottom: 15px;">Add New Player</h3>
+                <form id="addPlayerForm">
+                    <div class="match-result-form">
+                        <div class="form-group">
+                            <label for="newPlayerName">Player Name</label>
+                            <input type="text" id="newPlayerName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newPlayerTeam">Team</label>
+                            <select id="newPlayerTeam" class="form-control" required>
+                                <option value="MOIDFC">MOIDFC</option>
+                                <option value="SUBHANFC">SUBHANFC</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="match-result-form">
+                        <div class="form-group">
+                            <label for="newPlayerMatches">Matches Played</label>
+                            <input type="number" id="newPlayerMatches" class="form-control" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newPlayerGoals">Goals Scored</label>
+                            <input type="number" id="newPlayerGoals" class="form-control" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newPlayerAssists">Assists</label>
+                            <input type="text" id="newPlayerAssists" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="newPlayerWins">Matches Won</label>
+                            <input type="number" id="newPlayerWins" class="form-control" min="0" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPlayerRating">Average Rating</label>
+                        <input type="number" id="newPlayerRating" class="form-control" min="0" max="10" step="0.1" required>
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">Add Player</button>
+                </form>
+            `;
+            
+            document.getElementById('addPlayerForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                showMessage('New player added successfully!', 'success');
+            });
+        }
+
+        // Event listeners
+        searchInput.addEventListener('input', filterAndSortPlayers);
+        teamFilter.addEventListener('change', filterAndSortPlayers);
+        sortSelect.addEventListener('change', filterAndSortPlayers);
+        
+        adminLoginBtn.addEventListener('click', () => {
+            loginModal.style.display = 'flex';
+        });
+        
+        addMatchBtn.addEventListener('click', () => {
+            matchModal.style.display = 'flex';
+        });
+        
+        closeLoginModal.addEventListener('click', () => {
+            loginModal.style.display = 'none';
+        });
+        
+        closeMatchModal.addEventListener('click', () => {
+            matchModal.style.display = 'none';
+        });
+        
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            adminLogin();
+        });
+        
+        matchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            addMatchResult();
+        });
+        
+        logoutBtn.addEventListener('click', () => {
+            adminPanel.style.display = 'none';
+            showMessage('Logged out successfully!', 'success');
+        });
+        
+        updatePlayerBtn.addEventListener('click', showUpdatePlayerForm);
+        addPlayerBtn.addEventListener('click', showAddPlayerForm);
+
+        // Close modals when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === loginModal) {
+                loginModal.style.display = 'none';
+            }
+            if (e.target === matchModal) {
+                matchModal.style.display = 'none';
+            }
+        });
+
+        // Initialize the table when page loads
+        document.addEventListener('DOMContentLoaded', initTable);
+    </script>
+</body>
+</html>
